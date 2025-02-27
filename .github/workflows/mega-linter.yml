@@ -22,12 +22,6 @@ jobs:
   megalinter:
     name: MegaLinter
     runs-on: ubuntu-latest
-    permissions:
-      # Give the default GITHUB_TOKEN write permission to commit and push, comment issues & post new PR
-      # Remove the ones you do not need
-      contents: write
-      issues: write
-      pull-requests: write
     steps:
       # Git Checkout
       - name: Checkout Code
@@ -45,7 +39,6 @@ jobs:
         env:
           # All available variables are described in documentation
           # https://megalinter.io/configuration/
-          VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/ksmith-20250215' }} # Validates all source when push on main, else just the git diff with main. Override with true if you always want to lint all sources
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # ADD YOUR CUSTOM ENV VARIABLES HERE OR DEFINE THEM IN A FILE .mega-linter.yml AT THE ROOT OF YOUR REPOSITORY
           # DISABLE: COPYPASTE,SPELL # Uncomment to disable copy-paste and spell checks
@@ -58,7 +51,9 @@ jobs:
           name: MegaLinter reports
           path: |
             megalinter-reports
-            mega-linter.log
+
+      - name: Convert to JUNIT
+        run: bash scripts/convert_junit.sh
 
       # Create pull request if applicable (for now works only on PR from same repository, not from forks)
 #      - name: Create Pull Request with applied fixes
