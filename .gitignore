@@ -2,9 +2,9 @@ node_modules/
 database/database.db
 .vscode/
 uploads/
-
+.idea
+yarn.lock
 logNumbers.json
 settings.json
-
 logs/
-logNumbers.json
+*.jar

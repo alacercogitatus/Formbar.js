@@ -1,4 +1,10 @@
 {
 	"whitelistActive": false,
-	"blacklistActive": false
+	"blacklistActive": false,
+	"logLevel": "debug",
+	"logFolder": "logs",
+	"logNumbersFile": "logNumbers.json",
+	"logNumbersFileTemplate": "logNumbers-template.json",
+	"database": ["database", "database.db"],
+	"databaseTemplate": ["database", "database-template.db"]
 }

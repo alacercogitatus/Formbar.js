@@ -2,6 +2,7 @@
 const express = require('express')
 const session = require('express-session') //For storing client login data
 const { encrypt, decrypt } = require('./crypto.js') //For encrypting passwords
+const path = require('path')
 const sqlite3 = require('sqlite3').verbose()
 const jwt = require('jsonwebtoken') //For authentication system between Plugins and Formbar
 const excelToJson = require('convert-excel-to-json')
@@ -10,10 +11,17 @@ const upload = multer({ dest: 'uploads/' }) //Selects a file destination for upl
 const crypto = require('crypto')
 const winston = require('winston')
 const fs = require("fs")
-const dailyFile = require("winston-daily-rotate-file");
-const { start } = require('repl')
+// TODO: Doesn't require a variable, so don't allocate one
+require("winston-daily-rotate-file");
+/*
+	TODO: Remove not used imports
+ */
+// const { start } = require('repl')
 
-var app = express()
+/*
+	TODO: Use "let" instead of "var" for portability
+ */
+let app = express()
 const http = require('http').createServer(app)
 const io = require('socket.io')(http)
 
@@ -22,7 +30,10 @@ app.set('view engine', 'ejs')
 
 
 // Create session for user information to be transferred from page to page
-var sessionMiddleware = session({
+/*
+	TODO: Use "let" instead of "var" for portability
+ */
+let sessionMiddleware = session({
 	secret: crypto.randomBytes(256).toString('hex'), //Used to sign into the session via cookies
 	resave: false, //Used to prevent resaving back to the session store, even if it wasn't modified
 	saveUninitialized: false //Forces a session that is new, but not modified, or "uninitialized" to be saved to the session store
@@ -51,26 +62,65 @@ app.use('/js/chart.js', express.static(__dirname + '/node_modules/chart.js/dist/
 app.use('/js/iro.js', express.static(__dirname + '/node_modules/@jaames/iro/dist/iro.min.js'))
 app.use('/js/floating-ui-core.js', express.static(__dirname + '/node_modules/@floating-ui/core/dist/floating-ui.core.umd.min.js'))
 app.use('/js/floating-ui-dom.js', express.static(__dirname + '/node_modules/@floating-ui/dom/dist/floating-ui.dom.umd.min.js'))
+/* FIXME: Non-existent file causes program error.
+    - Fix to detect file, and if not found, use template.
+    - Move this before logNumbers, so that logNumbers can use settings for location.
+ */
+if (!fs.existsSync("settings.json")){
+	fs.copyFileSync("settings-template.json", "settings.json")
+}
+/* FIXME: Reading directly into parse might introduce vulnerability based on reading a direct Buffer.
+    - Convert to string before parsing.
+ */
+let s = fs.readFileSync("settings.json")
+let settings = JSON.parse(s.toString('utf-8'))
+// TODO: Once loaded, verify that the settings file has all the same keys as the template file, and if not, copy the missing keys to the existing settings.
 
-let logNumbers = JSON.parse(fs.readFileSync("logNumbers.json"))
-let settings = JSON.parse(fs.readFileSync("settings.json"))
+
+/* FIXME: Non-existent file causes program error.
+    - Fix to detect file, and if not found, use template.
+ */
+if (!fs.existsSync(settings.logNumbersFile)){
+	fs.copyFileSync(settings.logNumbersFileTemplate, settings.logNumbersFile)
+}
+/* FIXME: Reading directly into parse might introduce vulnerability based on reading a direct Buffer.
+    - Convert to string before parsing.
+ */
+let l = fs.readFileSync(settings.logNumbersFile)
+let logNumbers = JSON.parse(l.toString('utf-8'))
+
 
 // Establishes the connection to the database file
-let db = new sqlite3.Database('database/database.db')
+/* FIXME: Using a static location could cause issues on non-linux systems.
+	- Always try to use filesystem operations to find files.
+ */
+/*
+	FIXME: Calling a new sqlite3 database will create the file, but not use a template, so it's blank by default.
+		- Detect for existing database, if not, copy template.
+ */
+let db_location = path.join(...settings.database)
+if (!fs.existsSync(db_location)){
+	fs.copyFileSync(path.join(...settings.databaseTemplate), db_location)
+}
+let db = new sqlite3.Database(db_location)
 
 /**
  * Creates a new logger transport with a daily rotation.
  *
  * @param {string} level - The level of logs to record.
- * @returns {winston.transports.DailyRotateFile} The created transport.
+ * @returns {DailyRotateFile} The created transport.
  */
 
 //This function creates a new daily rotating file transport for a given log level.
 function createLoggerTransport(level) {
 	// Create a new daily rotate file transport for Winston
+	// TODO: Don't have one file per logging level, they should all be in the same file.
+	// TODO: DO Have different files per "silo" or "component", if needed. (routes vs database vs etc)
+	// FIXME: Use fs operations to build the path, don't statically create the path.
+	let filename = path.join(settings.logFolder, `application-%DATE%.log`)
 	let transport = new winston.transports.DailyRotateFile({
 		//This sets the filename pattern, date pattern, maximum number of log files to keep, and log level for the transport.
-		filename: `logs/application-${level}-%DATE%.log`, // The filename pattern to use
+		filename: filename, // The filename pattern to use
 		datePattern: "YYYY-MM-DD-HH", // The date pattern to use in the filename
 		maxFiles: "30d", // The maximum number of log files to keep
 		level: level // The level of logs to record
@@ -81,9 +131,11 @@ function createLoggerTransport(level) {
 		// Reset the error log count
 		logNumbers.error = 0;
 		// Convert the log numbers to a string
-		logNumbersString = JSON.stringify(logNumbers);
+		// TODO: Do not implicitly declare variables
+		let logNumbersString = JSON.stringify(logNumbers);
 		// Write the log numbers to a file
-		fs.writeFileSync("logNumbers.json", logNumbersString);
+        // FIXME: Use settings configuration
+		fs.writeFileSync(settings.logNumbersFile, logNumbersString);
 		// Delete the old log file
 		fs.unlink(oldFilename, (err) => {
 			//If there's an error deleting the old log file, it logs the error. Otherwise, it logs that the file was deleted.
@@ -97,30 +149,35 @@ function createLoggerTransport(level) {
 		});
 	});
 
-	//Finall, it returns the created transport.
+	//Finally, it returns the created transport.
 	return transport;
-};
+}
 
 //This line creates a new logger instance using the winston library
 const logger = winston.createLogger({
-	//This block defines the logging levels. The lower the number, the higher the serverity. For example, critical is more severe than error.
+	//This block defines the logging levels. The lower the number, the higher the severity. For example, critical is more severe than error.
 	levels: {
 		critical: 0,
 		error: 1,
 		warning: 2,
 		info: 3,
-		verbose: 4
+		verbose: 4,
+        // TODO: Add debug, it is a common developer flag for logging.
+        debug: 5
 	},
 	//This sets the format of the log messages. It combines a timestamp and a custom print function.
 	format: winston.format.combine(
 		winston.format.timestamp(),
 		winston.format.printf(({ timestamp, level, message }) => {
-			/*If the log level is error, it increments the error count, saves it to a file, and formats the log message to include the error count. 
+			/*If the log level is error, it increments the error count, saves it to a file, and formats the log message to include the error count.
 			For other log levels, it simply formats the log message with the timestamp, level, and message.*/
-			if (level == "error") {
+            // FIXME: Always look for "type coercion": https://developer.mozilla.org/en-US/docs/Glossary/Type_coercion
+			if (level === "error") {
 				logNumbers.error++;
-				logNumbersString = JSON.stringify(logNumbers);
-				fs.writeFileSync("logNumbers.json", logNumbersString);
+                // TODO: Do not implicitly declare variables
+				let logNumbersString = JSON.stringify(logNumbers);
+                // TODO: Use settings configuration
+				fs.writeFileSync(settings.logNumbersFile, logNumbersString);
 				return `[${timestamp}] ${level} - Error Number ${logNumbers.error}: ${message}`;
 			} else {
 				return `[${timestamp}] ${level}: ${message}`
@@ -129,11 +186,9 @@ const logger = winston.createLogger({
 	),
 	/*This sets up the transports, which are the storage mechanisms for the logs. It creates a daily rotating file for each log level and also logs errors
 	to the console.*/
+	// TODO: Create a single logger transport, but set the logging level via the settings file. This way, only needed messages are printed for the developer/admin.
 	transports: [
-		createLoggerTransport("critical"),
-		createLoggerTransport("error"),
-		createLoggerTransport("info"),
-		createLoggerTransport("verbose"),
+        createLoggerTransport(settings.logLevel),
 		new winston.transports.Console({ level: 'error' })
 	],
 })
@@ -144,7 +199,7 @@ most recently added record. The result of the query is passed to a callback func
 during the execution of the query is passed as the first argument (err).*/
 db.get('SELECT MAX(id) FROM poll_history', (err, pollHistory) => {
 	/*This is an error handling block. If an error occurred during the execution of the SQL query (i.e., if err is not null), then the error is logged
-	using a logger object's log method. The log method is called with two arguments: a string indicating the severity level of the log ('error'), and 
+	using a logger object's log method. The log method is called with two arguments: a string indicating the severity level of the log ('error'), and
 	the stack trace of the error (err.stack).*/
 	if (err) {
 		logger.log('error', err.stack)
@@ -158,7 +213,7 @@ db.get('SELECT MAX(id) FROM poll_history', (err, pollHistory) => {
 })
 
 
-/*This line is defining a constant named MANAGER_PERMISSIONS and assigning it a value of 5. This means that a user with a role of "Manager" has the 
+/*This line is defining a constant named MANAGER_PERMISSIONS and assigning it a value of 5. This means that a user with a role of "Manager" has the
 highest level of permissions in the application.*/
 const MANAGER_PERMISSIONS = 5
 /*This line is defining a constant named TEACHER_PERMISSIONS and assigning it a value of 4. This means that a user with a role of "Teacher" has the
@@ -265,7 +320,7 @@ const GLOBAL_SOCKET_PERMISSIONS = {
 }
 //This line declares a constant object CLASS_SOCKET_PERMISSIONS. The const keyword means that the variable can't be reassigned.
 const CLASS_SOCKET_PERMISSIONS = {
-	//This line defines a property named help that requires student permissions, which was defined earlier in the code. 
+	//This line defines a property named help that requires student permissions, which was defined earlier in the code.
 	help: STUDENT_PERMISSIONS,
 	/*These lines define actions like responding to a poll, requesting a break, ending a break, updating a poll, updating the mode, updating a quiz,
 	and updating a lesson. All of these actions require student permissions.*/
@@ -297,7 +352,7 @@ const CLASS_SOCKET_PERMISSIONS = {
 
 // make a better name for this
 const CLASS_SOCKET_PERMISSION_SETTINGS = {
-	/*This line maps the action startPoll to the permission associated with controlPolls. This means that in order to start a poll, a user must 
+	/*This line maps the action startPoll to the permission associated with controlPolls. This means that in order to start a poll, a user must
 	have the permissions associated with controlPolls.*/
 	startPoll: 'controlPolls',
 	//Similarly, to clear a poll, a user must have the permissions associated with controlPolls.
@@ -354,7 +409,7 @@ const CLASS_SOCKET_PERMISSION_SETTINGS = {
 
 //This line declares a constant object named DEFAULT_CLASS_PERMISSIONS. The const keywork means that the variable cannot be reassigned.
 const DEFAULT_CLASS_PERMISSIONS = {
-	/*This line defines a property of the object called games. The value of this property MOD_PERMISSIONS, which was defined earlier. This means 
+	/*This line defines a property of the object called games. The value of this property MOD_PERMISSIONS, which was defined earlier. This means
 	that you must have mod permissions to access the games.*/
 	games: MOD_PERMISSIONS,
 	//Similarly, this line defines a property controlPolls with a value of MOD_PERMISSIONS. This mean that you must have mod permissions to control polls.
@@ -534,6 +589,8 @@ function convertHSLToHex(hue, saturation, lightness) {
 		let green = getColorComponent(8)
 		let blue = getColorComponent(4)
 
+		// TODO: Possibly combine all errors that are instances and return those.
+		// This code creates a "drop through error" and takes more time to debug if you "fix" red, then green throws. Instead, just throw all errors at once.
 		if (red instanceof Error) throw red
 		if (green instanceof Error) throw green
 		if (blue instanceof Error) throw blue

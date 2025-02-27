@@ -8,3 +8,12 @@ Formbar.js is a classroom polling and management system. The two key components 
 - Have permanent logins and seperate classes
 
 ## Documentation inside of wiki
+
+
+## Testing
+
+### STATIC: Dependency Check
+
+https://owasp.org/www-project-dependency-check/
+
+Run via `yarn dep_check`

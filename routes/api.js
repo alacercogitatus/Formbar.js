@@ -17,8 +17,9 @@ let logNumbers = JSON.parse(fs.readFileSync("logNumbers.json"))
  */
 function createLoggerTransport(level) {
 	// Create a new daily rotate file transport for Winston
+	// TODO: Don't log one per level, use a file per "component"
 	let transport = new winston.transports.DailyRotateFile({
-		filename: `logs/application-${level}-%DATE%.log`, // The filename pattern to use
+		filename: `logs/api-%DATE%.log`, // The filename pattern to use
 		datePattern: "YYYY-MM-DD-HH", // The date pattern to use in the filename
 		maxFiles: "30d", // The maximum number of log files to keep
 		level: level // The level of logs to record
@@ -29,7 +30,8 @@ function createLoggerTransport(level) {
 		// Reset the error log count
 		logNumbers.error = 0;
 		// Convert the log numbers to a string
-		logNumbersString = JSON.stringify(logNumbers);
+		// TODO: Do not implicitly declare variables
+		let logNumbersString = JSON.stringify(logNumbers);
 		// Write the log numbers to a file
 		fs.writeFileSync("logNumbers.json", logNumbersString);
 		// Delete the old log file
