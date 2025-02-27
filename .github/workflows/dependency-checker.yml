@@ -1,7 +1,7 @@
 name: Dependency-Check
 on:
   push:
-    branches: [ ksmith-20250215 ]
+    branches: [ ksmith ]
 
 jobs:
   build:

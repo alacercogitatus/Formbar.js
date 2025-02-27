@@ -6,7 +6,7 @@ name: MegaLinter
 on:
   # Trigger mega-linter at every push. Action will also be visible from Pull Requests to main
   push:
-    branches: [ ksmith-20250215 ]
+    branches: [ ksmith ]
 
 env: # Comment env block if you don't want to apply fixes
   # Apply linter fixes configuration
