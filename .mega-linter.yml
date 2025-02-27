@@ -3,6 +3,7 @@ JSON_REPORTER: true
 MARKDOWN_SUMMARY_REPORTER: true
 TAP_REPORTER: true
 VALIDATE_ALL_CODEBASE: false
+FILTER_REGEX_INCLUDE: .*.js|static/|routes/|views/|.*.md
 DISABLE:
   - PHP
   - PERL

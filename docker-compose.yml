@@ -1,0 +1,5 @@
+services:
+  megalinter:
+    image: oxsecurity/megalinter:v8
+    volumes:
+      - ./:/tmp/lint:rw
