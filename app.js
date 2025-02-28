@@ -100,6 +100,7 @@ let logNumbers = JSON.parse(l.toString('utf-8'))
  */
 let db_location = path.join(...settings.database)
 // Added this comment to trigger MegaLinter
+
 if (!fs.existsSync(db_location)){
 	fs.copyFileSync(path.join(...settings.databaseTemplate), db_location)
 }

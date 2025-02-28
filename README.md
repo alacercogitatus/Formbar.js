@@ -4,6 +4,7 @@ Formbar.js is a classroom polling and management system. The two key components 
 ## STATUS
 
 [![MegaLinter](https://github.com/alacercogitatus/Formbar.js/workflows/MegaLinter/badge.svg?query=branch%3Aksmith)](https://github.com/alacercogitatus/Formbar.js/actions?query=workflow%3AMegaLinter+branch%3Aksmith)
+[![MegaLinter](https://github.com/alacercogitatus/Formbar.js/workflows/Dependency-Check/badge.svg?query=branch%3Aksmith)](https://github.com/alacercogitatus/Formbar.js/actions?query=workflow%3ADependency-Check+branch%3Aksmith)
 
 ## Goal
 - Reach feature parity with formbar
