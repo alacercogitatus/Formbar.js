@@ -5,6 +5,7 @@
     <body id="content">
         <%if(lesson.content !== undefined){%>
             <h3 id="headerText"><%- lesson.date %></h3>
+
             <% for (let i=0; i < lesson.content.length; i++) { %>
                 <u>
                     <h2 id="headerText"><%-lesson.content[i][0]%></h2>
