@@ -3,6 +3,7 @@
 # Version 5.0.0 tap-junit has breaking changes that are currently getting fixed
 npm install -g tap-junit@4.2.0
 mkdir report_converted/
+ls -lah
 cd "./MegaLinter reports/tap"
 for report in *; do
 # workaround for https://github.com/dhershman1/tap-junit/issues/30#issuecomment-744462006
