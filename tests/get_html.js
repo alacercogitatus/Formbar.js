@@ -7,8 +7,17 @@ let values = root.querySelectorAll('a.ActionListContent span.Counter').map((el) 
 let js = labels.map((el, idx) => {
     return {"label": el, "value": values[idx]}
 }).reduce((p, c) => {
-    p[c.label.toLowerCase()] = c.value
+    let color = "lightgrey"
+    if (c.value > 0){
+        color = "yellow"
+    } else if (c.value > 2){
+        color = "orange"
+    } else if (c.value > 6){
+        color="red"
+    }
+    let labe = c.label.toLowerCase(), o = {"message": c.value, "label": c.label, color: color, namedLogo: "dependabot"};
+    let f = fs.openSync(`dependabot-${labe}.json`, 'w')
+    p[labe] = c.value
+    fs.writeSync(f, JSON.stringify(o))
     return p
 }, {});
-let f = fs.openSync("dependabot.json", 'w')
-fs.writeSync(f, JSON.stringify(js))
