@@ -3,8 +3,8 @@
 # Version 5.0.0 tap-junit has breaking changes that are currently getting fixed
 npm install -g tap-junit@4.2.0
 mkdir report_converted/
-ls -lah
 cd "./megalinter-reports/tap"
+ls -lah
 for report in *; do
 # workaround for https://github.com/dhershman1/tap-junit/issues/30#issuecomment-744462006
   'sed -i "s/message: \*\+/message: /g" $report'
