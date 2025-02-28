@@ -10,10 +10,10 @@ https://shields.io/badges/dynamic-json-badge
 
 
 [![Dependabot](https://badgen.net/badge/Dependabot/enabled/green?icon=dependabot)](https://dependabot.com/)
-![Endpoint Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Falacercogitatus%2FFormbar.js%2Frefs%2Fheads%2Fksmith%2Ftests%2Fdependabot-critical.json)
-![Endpoint Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Falacercogitatus%2FFormbar.js%2Frefs%2Fheads%2Fksmith%2Ftests%2Fdependabot-high.json)
-![Endpoint Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Falacercogitatus%2FFormbar.js%2Frefs%2Fheads%2Fksmith%2Ftests%2Fdependabot-moderate.json)
-![Endpoint Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Falacercogitatus%2FFormbar.js%2Frefs%2Fheads%2Fksmith%2Ftests%2Fdependabot-low.json)
+![Endpoint Badge](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/alacercogitatus/Formbar.js/refs/heads/ksmith/tests/dependabot-critical.json)
+![Endpoint Badge](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/alacercogitatus/Formbar.js/refs/heads/ksmith/tests/dependabot-high.json)
+![Endpoint Badge](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/alacercogitatus/Formbar.js/refs/heads/ksmith/tests/dependabot-moderate.json)
+![Endpoint Badge](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/alacercogitatus/Formbar.js/refs/heads/ksmith/tests/dependabot-low.json)
 
 
 ## Goal
