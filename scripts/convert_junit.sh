@@ -4,7 +4,7 @@
 npm install -g tap-junit@4.2.0
 mkdir report_converted/
 ls -lah
-cd "./MegaLinter reports/tap"
+cd "./megalinter-reports/tap"
 for report in *; do
 # workaround for https://github.com/dhershman1/tap-junit/issues/30#issuecomment-744462006
   'sed -i "s/message: \*\+/message: /g" $report'
