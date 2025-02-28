@@ -3,7 +3,7 @@ JSON_REPORTER: true
 MARKDOWN_SUMMARY_REPORTER: true
 TAP_REPORTER: true
 VALIDATE_ALL_CODEBASE: false
-FILTER_REGEX_INCLUDE: (.*.js|static/.*|routes/.*|views/.*|.*.md)
+FILTER_REGEX_INCLUDE: (.*.js|static/|routes/|views/|.*.md)
 FILTER_REGEX_EXCLUDE: (tests/.*)
 JAVASCRIPT_ES_FILE_EXTENSIONS: [".ejs", ".js", ".vue"]
 TAP_REPORTER_OUTPUT_DETAIL: detailed
