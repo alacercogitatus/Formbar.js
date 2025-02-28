@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "nodemon app",
 		"start": "node app",
-		"dep_check": "./tests/dependency-check/bin/dependency-check.sh --project Formbar.js --log logs/dep_check.log --junitFailOnCVSS 6 -f JUNIT -f HTML -s ./routes -s ./views -s ./app.js -s ./static --out ./tests/reports/"
+		"dep_check": "tests/dependency-check/bin/dependency-check.sh --project Formbar.js --log logs/dep_check.log --junitFailOnCVSS 6 -f JUNIT -f HTML -s ./routes -s ./views -s ./app.js -s ./static --out ./tests/reports/"
 	},
 	"repository": {
 		"type": "git",
