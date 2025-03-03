@@ -4,6 +4,7 @@
 	"description": "Javascript rewrite of Formbar, an open source classroom management tool",
 	"main": "app.js",
 	"scripts": {
+		"jest": "jest --detectOpenHandles",
 		"dev": "nodemon app",
 		"start": "node app",
 		"dep_check": "tests/dependency-check/bin/dependency-check.sh --project Formbar.js --log logs/dep_check.log --junitFailOnCVSS 6 -f JUNIT -f HTML -s ./routes -s ./views -s ./app.js -s ./static --out ./tests/reports/"
@@ -44,6 +45,8 @@
 		"winston-daily-rotate-file": "^5.0.0"
 	},
 	"devDependencies": {
-		"nodemon": "^3.0.1"
+		"nodemon": "^3.0.1",
+		"jest": "^29.7.0",
+		"@types/jest": "^29.5.14"
 	}
 }

@@ -11,6 +11,7 @@ const upload = multer({ dest: 'uploads/' }) //Selects a file destination for upl
 const crypto = require('crypto')
 const winston = require('winston')
 const fs = require("fs")
+const perms = require("static/js/permissions")
 // TODO: Doesn't require a variable, so don't allocate one
 require("winston-daily-rotate-file");
 /*
@@ -217,7 +218,7 @@ db.get('SELECT MAX(id) FROM poll_history', (err, pollHistory) => {
 
 /*This line is defining a constant named MANAGER_PERMISSIONS and assigning it a value of 5. This means that a user with a role of "Manager" has the
 highest level of permissions in the application.*/
-const MANAGER_PERMISSIONS = 5
+const MANAGER_PERMISSIONS = perms.MANAGER_PERMISSIONS
 /*This line is defining a constant named TEACHER_PERMISSIONS and assigning it a value of 4. This means that a user with a role of "Teacher" has the
 second highest level of permissions.*/
 const TEACHER_PERMISSIONS = 4
