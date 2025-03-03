@@ -218,7 +218,7 @@ db.get('SELECT MAX(id) FROM poll_history', (err, pollHistory) => {
 
 /*This line is defining a constant named MANAGER_PERMISSIONS and assigning it a value of 5. This means that a user with a role of "Manager" has the
 highest level of permissions in the application.*/
-const MANAGER_PERMISSIONS = perms.MANAGER_PERMISSIONS
+const {MANAGER_PERMISSIONS} = perms.user
 /*This line is defining a constant named TEACHER_PERMISSIONS and assigning it a value of 4. This means that a user with a role of "Teacher" has the
 second highest level of permissions.*/
 const TEACHER_PERMISSIONS = 4
